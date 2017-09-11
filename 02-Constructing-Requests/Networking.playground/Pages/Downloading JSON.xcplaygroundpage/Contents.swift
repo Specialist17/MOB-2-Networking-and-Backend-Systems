@@ -104,10 +104,17 @@ postReq.httpBody = jsonData
 
 // 1
 
-let postMethod: String! = "POST"
-let getMethod: String! = "GET"
-let putMethod: String! = "PUT"
-let deleteMethod: String! = "DELETE"
+enum Methods: String {
+    case get
+    case post
+    case put
+    case delete
+}
+
+let postMethod: String! = Methods.post.rawValue
+let getMethod: String! = Methods.get.rawValue
+let putMethod: String! = Methods.put.rawValue
+let deleteMethod: String! = Methods.delete.rawValue
 
 // 2
 let pokeUrl = URL(string: "http://pokeapi.co/api/v1/pokemon/1")!
@@ -126,15 +133,16 @@ session.dataTask(with: pokeReq) { (data, res, err) in
 let postURL = URL(string: "https://jsonplaceholder.typicode.com/posts")!
 var testPostReq = URLRequest(url: postURL)
 
-let myDict: JSON = ["userId": 3, "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto"]
+let myDict: JSON = ["userId": 3, "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "body": "Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Nulla vitae elit libero, a pharetra augue."]
 let testData = try? JSONSerialization.data(withJSONObject: myDict, options: JSONSerialization.WritingOptions.prettyPrinted)
 
 testPostReq.httpMethod = postMethod
-//testPostReq.httpBody = testData
+testPostReq.httpBody = testData
 
 session.dataTask(with: testPostReq) { (data, res, err) in
     if let data = data {
         let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        print(res)
         print(json!)
     }
 }.resume()
