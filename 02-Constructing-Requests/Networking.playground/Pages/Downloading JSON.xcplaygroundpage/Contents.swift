@@ -104,11 +104,16 @@ session.dataTask(with: postReq) { (data, resp, err) in
 
 // 1
 
+let postMethod: String! = "POST"
+let getMethod: String! = "GET"
+let putMethod: String! = "PUT"
+let deleteMethod: String! = "DELETE"
+
 // 2
 let pokeUrl = URL(string: "http://pokeapi.co/api/v1/pokemon/1")!
 var pokeReq = URLRequest(url: pokeUrl)
 
-pokeReq.httpMethod = "GET"
+pokeReq.httpMethod = getMethod
 
 session.dataTask(with: pokeReq) { (data, res, err) in
     if let data = data {
