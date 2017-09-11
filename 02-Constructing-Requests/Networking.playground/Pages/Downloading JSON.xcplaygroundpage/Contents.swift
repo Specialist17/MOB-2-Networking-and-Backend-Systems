@@ -21,23 +21,23 @@ import PlaygroundSupport
  
 */
 
-let url = URL(string: "https://jsonplaceholder.typicode.com/photos/1")!
-
-var request = URLRequest(url: url)
-request.httpMethod = "GET"
-
+//let url = URL(string: "https://jsonplaceholder.typicode.com/photos/1")!
+//
+//var request = URLRequest(url: url)
+//request.httpMethod = "GET"
+//
 let session = URLSession.shared
-
-let task = session.dataTask(with: request) { (data, response, error) in
-    
-    if let data = data {
-        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-        print(json)
-    }
-}
+//
+//let task = session.dataTask(with: request) { (data, response, error) in
+//
+//    if let data = data {
+//        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+//        print(json)
+//    }
+//}
 
 // Don't forget to resume task
-task.resume()
+//task.resume()
 
 
 /*:
@@ -86,12 +86,12 @@ let jsonData = try? JSONSerialization.data(withJSONObject: jsonDictionary, optio
 postReq.httpMethod = "POST"
 postReq.httpBody = jsonData
 
-session.dataTask(with: postReq) { (data, resp, err) in
-    if let data = data {
-        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
-        print(json)
-    }
-}.resume()
+//session.dataTask(with: postReq) { (data, resp, err) in
+//    if let data = data {
+//        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+//        print(json)
+//    }
+//}.resume()
 
 
 /*:
@@ -119,6 +119,23 @@ session.dataTask(with: pokeReq) { (data, res, err) in
     if let data = data {
         let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
         print(json)
+    }
+}.resume()
+
+
+let postURL = URL(string: "https://jsonplaceholder.typicode.com/posts")!
+var testPostReq = URLRequest(url: postURL)
+
+let myDict: JSON = ["userId": 3, "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "body": "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto"]
+let testData = try? JSONSerialization.data(withJSONObject: myDict, options: JSONSerialization.WritingOptions.prettyPrinted)
+
+testPostReq.httpMethod = postMethod
+//testPostReq.httpBody = testData
+
+session.dataTask(with: testPostReq) { (data, res, err) in
+    if let data = data {
+        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        print(json!)
     }
 }.resume()
 
