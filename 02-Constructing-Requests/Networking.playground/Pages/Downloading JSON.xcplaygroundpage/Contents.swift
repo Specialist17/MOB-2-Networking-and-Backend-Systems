@@ -102,6 +102,21 @@ session.dataTask(with: postReq) { (data, resp, err) in
 
 */
 
+// 1
+
+// 2
+let pokeUrl = URL(string: "http://pokeapi.co/api/v1/pokemon/1")!
+var pokeReq = URLRequest(url: pokeUrl)
+
+pokeReq.httpMethod = "GET"
+
+session.dataTask(with: pokeReq) { (data, res, err) in
+    if let data = data {
+        let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments)
+        print(json)
+    }
+}.resume()
+
 
 /*: ## Resources
  [URLSessions](https://www.raywenderlich.com/158106/urlsession-tutorial-getting-started)
