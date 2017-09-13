@@ -3,5 +3,7 @@
     <pages>
         <page name='Modeling JSON in Swift 4'/>
         <page name='Error Handling'/>
+        <page name='Pokemon'/>
+        <page name='AnotherTry'/>
     </pages>
 </playground>

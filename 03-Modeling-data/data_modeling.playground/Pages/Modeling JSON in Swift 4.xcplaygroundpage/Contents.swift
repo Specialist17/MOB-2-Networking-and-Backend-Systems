@@ -16,7 +16,7 @@ import PlaygroundSupport
  
  Lets look at how we would download and Anime from an API and model it with JSON.
  
-*/
+ */
 
 struct Anime {
     let title: String
@@ -31,11 +31,13 @@ struct Anime {
 extension Anime: Decodable {
     
     // Declaring our keys
+    //1
     enum Keys: String, CodingKey {
         case title
         case thumbnail
     }
     
+    // 2
     init(from decoder: Decoder) throws {
         // define our keyed container
         let container = try decoder.container(keyedBy: Keys.self)
@@ -47,5 +49,22 @@ extension Anime: Decodable {
     }
 }
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+extension Anime: Encodable {
+    //3
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: Keys.self)
+        try container.encode(title, forKey: .title)
+        try container.encode(thumbnail, forKey: .thumbnail)
+    }
+}
 
+/*:
+ ## Resources
+ 1. [JSON modeling with Swift 4](https://grokswift.com/json-swift-4/)
+ 
+ 2. [Apple - Encodable & Decodable](https://developer.apple.com/documentation/foundation/archives_and_serialization/encoding_and_decoding_custom_types)
+ 
+ 3. [Swift 4 Codable Guide](http://benscheirman.com/2017/06/ultimate-guide-to-json-parsing-with-swift-4/)
+ */
+
+PlaygroundPage.current.needsIndefiniteExecution = true
