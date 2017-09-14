@@ -8,9 +8,9 @@ var str = "Hello, playground"
 print(str)
 
 struct Pokemon {
-    private var name: String!
-    private var pokedexId: Int!
-    private var hp: Int!
+    let name: String!
+    let pokedexId: Int!
+    let hp: Int!
     
 
     init(title: String, pokedexId: Int, hp: Int) {
@@ -53,7 +53,7 @@ session.dataTask(with: request) { (data, resp, err) in
         guard let pokemon = try? JSONDecoder().decode(Pokemon.self, from: data)
             else {return}
         
-        print(pokemon)
+        print(pokemon.name)
     }
 }.resume()
 
