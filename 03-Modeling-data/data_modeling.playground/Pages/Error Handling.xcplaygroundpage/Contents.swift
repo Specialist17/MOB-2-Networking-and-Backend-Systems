@@ -97,7 +97,7 @@ class Networking {
 
 let networking = Networking()
 networking.getAnime(id: "1") { (res) in
-    print(res)
+    dump(res)
 }
 
 /*:

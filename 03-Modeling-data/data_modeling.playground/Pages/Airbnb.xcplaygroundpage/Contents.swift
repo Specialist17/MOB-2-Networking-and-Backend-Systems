@@ -2,53 +2,105 @@
 import Foundation
 import PlaygroundSupport
 
-struct SearchResults: Decodable {
+
+struct Listing {
+    let name: String!
     
-    struct Result: Decodable {
-        
-        struct Listing: Decodable {
-            let bathrooms: Int!
-            let name: String!
-            let bedrooms: Int!
-        }
-        let listing: Listing!
+    init(name: String) {
+
+        self.name = name
     }
-    enum SearchResultKeys: String, CodingKey {
-        case results = "search_results"
+}
+
+extension Listing: Decodable {
+
+//    enum SearchResultKeys: String, CodingKey {
+//        case result = " "
+//    }
+    
+    enum ResultKeys: String, CodingKey {
+        case listing
     }
     
-    let results = [Result]
-    
-    init(results: [Result]) {
-        self.results = results
+    enum ListingKeys: String, CodingKey {
+        case name
     }
     
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: SearchResultKeys.self)
         
-        let results = try container.decode([Result].self, forKey: .results)
+//        let searchContainer = try decoder.container(keyedBy: SearchResultKeys.self)
         
-        self.init(results: results)
+//        let resultContainer = try searchContainer.nestedContainer(keyedBy: ResultKeys.self, forKey: .result)
+        
+        
+        let resultContainer = try decoder.container(keyedBy: ResultKeys.self)
+
+        let container = try resultContainer.nestedContainer(keyedBy: ListingKeys.self, forKey: .listing)
+        
+        let name = try container.decode(String.self, forKey: .name)
+        
+        self.init(name: name)
     }
+}
+
+struct ListingList: Decodable {
+    let search_results: [Listing]
     
+    
+//    init(listingsList: [Listing]) {
+//        self.listingList = listingsList
+//    }
+    
+//    enum ListKeys: String, CodingKey {
+//        case listingKey = "search_results"
+//    }
+//
+//    init(from decoder: Decoder) throws {
+//        let container = try decoder.container(keyedBy: ListKeys.self)
+//
+//        let searchResults = try container.decode([Listing].self, forKey: .listingKey)
+//
+//        self.init(listingsList: searchResults)
+//    }
 }
 
 let session = URLSession.shared
 let baseURL = URL(string: "https://api.airbnb.com/v2/search_results?api_key=915pw2pnf4h1aiguhph5gc5b2")!
 
-let request = URLRequest(url: baseURL)
+typealias JSON = [String: Any]
 
-session.dataTask(with: request) { (data, resp, err) in
-    //    print(data.result.value)
-    if let data = data {
+//: Defining the types of errors our application can have
+enum NetworkError: Error {
+    case unknown
+    case couldNotParseJSON
+}
+
+
+
+class Networking {
+    let session = URLSession.shared
+    let baseURL = URL(string: "https://api.airbnb.com/v2/search_results?api_key=915pw2pnf4h1aiguhph5gc5b2")!
+
+    func getAnime(id: String, completion: @escaping ([Listing]) -> Void) {
         
-        let decoder = JSONDecoder()
-        guard let pokemon = try? decoder.decode(SearchResults.self, from: data)
-            else {return}
+        let request = URLRequest(url: baseURL)
         
-        print(pokemon)
+        session.dataTask(with: request) { (data, resp, err) in
+            if let data = data {
+                
+                let animeList = try? JSONDecoder().decode(ListingList.self, from: data)
+                
+                guard let animes = animeList?.search_results else {return}
+                completion(animes)
+            }
+            }.resume()
     }
-}.resume()
+}
+
+let networking = Networking()
+networking.getAnime(id: "1") { (res) in
+    dump(res)
+}
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 
