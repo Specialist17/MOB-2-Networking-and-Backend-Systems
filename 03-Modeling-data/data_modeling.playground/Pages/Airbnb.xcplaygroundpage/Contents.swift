@@ -14,10 +14,7 @@ struct Listing {
 
 extension Listing: Decodable {
 
-//    enum SearchResultKeys: String, CodingKey {
-//        case result = " "
-//    }
-    
+
     enum ResultKeys: String, CodingKey {
         case listing
     }
@@ -27,11 +24,7 @@ extension Listing: Decodable {
     }
     
     init(from decoder: Decoder) throws {
-        
-//        let searchContainer = try decoder.container(keyedBy: SearchResultKeys.self)
-        
-//        let resultContainer = try searchContainer.nestedContainer(keyedBy: ResultKeys.self, forKey: .result)
-        
+
         
         let resultContainer = try decoder.container(keyedBy: ResultKeys.self)
 
@@ -45,23 +38,7 @@ extension Listing: Decodable {
 
 struct ListingList: Decodable {
     let search_results: [Listing]
-    
-    
-//    init(listingsList: [Listing]) {
-//        self.listingList = listingsList
-//    }
-    
-//    enum ListKeys: String, CodingKey {
-//        case listingKey = "search_results"
-//    }
-//
-//    init(from decoder: Decoder) throws {
-//        let container = try decoder.container(keyedBy: ListKeys.self)
-//
-//        let searchResults = try container.decode([Listing].self, forKey: .listingKey)
-//
-//        self.init(listingsList: searchResults)
-//    }
+
 }
 
 let session = URLSession.shared
@@ -93,7 +70,7 @@ class Networking {
                 guard let animes = animeList?.search_results else {return}
                 completion(animes)
             }
-            }.resume()
+        }.resume()
     }
 }
 
