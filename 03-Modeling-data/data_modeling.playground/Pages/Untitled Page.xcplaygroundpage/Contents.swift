@@ -6,8 +6,7 @@ import PlaygroundSupport
 struct Listing {
     var name: String!
     var bedrooms: Int!
-    var listings = [Listing]()
-
+    var listings: UnkeyedDecodingContainer?
 }
 
 extension Listing: Decodable {
@@ -27,39 +26,25 @@ extension Listing: Decodable {
     
     init(from decoder: Decoder) throws {
         
-        // container for [{ "count": 4 }, { "count": 5 }]
         var searchContainer = try decoder.container(keyedBy: SearchResultKeys.self)
        
         var listingsContainer = try searchContainer.nestedUnkeyedContainer(forKey: .search_results)
         
-        if let count = listingsContainer.count {
-            self.listings.reserveCapacity(count)
-            print("we good, we solid")
-            print(count)
-        }
+//        let resultContainer = try listingsContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.self)
+//
+//        let listingContainer = try resultContainer.decode(String.self, forKey: .listing)
+//        print(resultContainer)
+//
+//        print(listingContainer)
         
-        while !listingsContainer.isAtEnd {
-            
-            // container for a single nested object in the array, e.g { "count": 4 }
-           
-            let resultContainer = try listingsContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.self)
-            
-            let container = try resultContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.ListingKeys.self, forKey: .listing)
-            
-            let name = try container.decode(String.self, forKey: .name)
-            let bedrooms = try container.decode(Int.self, forKey: .bedrooms)
-            
-            self.listings.append(
-                try resultContainer.decode(Listing.self, forKey: .listing)
-            )
-        }
+        self.listings = listingsContainer
+        
+//        for x in 0..<listingsContainer.count! {
+//            print(x)
+//        }
+
     }
 }
-//
-//struct ListingList: Decodable {
-//    let search_results: [Listing]
-//
-//}
 
 let session = URLSession.shared
 let baseURL = URL(string: "https://api.airbnb.com/v2/search_results?api_key=915pw2pnf4h1aiguhph5gc5b2")!
@@ -78,7 +63,7 @@ class Networking {
     let session = URLSession.shared
     let baseURL = URL(string: "https://api.airbnb.com/v2/search_results?api_key=915pw2pnf4h1aiguhph5gc5b2")!
     
-    func getAnime(id: String, completion: @escaping ([Listing]) -> Void) {
+    func getAnime(id: String, completion: @escaping (Listing) -> Void) {
         
         let request = URLRequest(url: baseURL)
         
@@ -86,9 +71,10 @@ class Networking {
             if let data = data {
                 
                 let animeList = try? JSONDecoder().decode(Listing.self, from: data)
+//                print(animeList)
                 
-                guard let animes = animeList?.listings else {return}
-                completion(animes)
+//                guard let animes = animeList?.listings else {return}
+                completion(animeList!)
             }
             }.resume()
     }
@@ -96,7 +82,7 @@ class Networking {
 
 let networking = Networking()
 networking.getAnime(id: "1") { (res) in
-    dump(res)
+    print(res.listings)
 }
 
 PlaygroundPage.current.needsIndefiniteExecution = true
