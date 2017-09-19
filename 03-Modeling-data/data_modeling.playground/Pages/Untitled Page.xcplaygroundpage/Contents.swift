@@ -6,7 +6,12 @@ import PlaygroundSupport
 struct Listing {
     var name: String!
     var bedrooms: Int!
-    var listings: UnkeyedDecodingContainer?
+    var listings = [Listing]()
+    
+    init(name: String, bedrooms: Int) {
+        self.name = name
+        self.bedrooms = bedrooms
+    }
 }
 
 extension Listing: Decodable {
@@ -29,20 +34,19 @@ extension Listing: Decodable {
         var searchContainer = try decoder.container(keyedBy: SearchResultKeys.self)
        
         var listingsContainer = try searchContainer.nestedUnkeyedContainer(forKey: .search_results)
-        
-//        let resultContainer = try listingsContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.self)
-//
-//        let listingContainer = try resultContainer.decode(String.self, forKey: .listing)
-//        print(resultContainer)
-//
-//        print(listingContainer)
-        
-        self.listings = listingsContainer
-        
-//        for x in 0..<listingsContainer.count! {
-//            print(x)
-//        }
+        print(listingsContainer.count)
+    
+        while !listingsContainer.isAtEnd {
+            let resultContainer = try listingsContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.self)
+            
+            let container = try resultContainer.nestedContainer(keyedBy: SearchResultKeys.ResultKeys.ListingKeys.self, forKey: .listing)
 
+            let name = try container.decode(String.self, forKey: .name)
+            let bedrooms = try container.decode(Int.self, forKey: .bedrooms)
+            
+            let listing = Listing(name: name, bedrooms: bedrooms)
+            self.listings.append(listing)
+        }
     }
 }
 
@@ -73,16 +77,19 @@ class Networking {
                 let animeList = try? JSONDecoder().decode(Listing.self, from: data)
 //                print(animeList)
                 
-//                guard let animes = animeList?.listings else {return}
+                guard let animes = animeList?.listings else {return}
                 completion(animeList!)
             }
-            }.resume()
+        }.resume()
     }
 }
 
 let networking = Networking()
 networking.getAnime(id: "1") { (res) in
-    print(res.listings)
+    for listing in res.listings {
+        print(listing.name)
+        print(listing.bedrooms)
+    }
 }
 
 PlaygroundPage.current.needsIndefiniteExecution = true
