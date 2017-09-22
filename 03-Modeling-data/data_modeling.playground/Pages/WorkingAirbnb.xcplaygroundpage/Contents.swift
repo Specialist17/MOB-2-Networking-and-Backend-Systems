@@ -101,6 +101,10 @@ class Networking {
         let request = URLRequest(url: baseURL)
         
         session.dataTask(with: request) { (data, resp, err) in
+        
+            if let error = err {
+                print(NetworkError.couldNotParseJSON)
+            }
             if let data = data {
                 
                 let animeList = try? JSONDecoder().decode(Listing.self, from: data)
@@ -110,17 +114,23 @@ class Networking {
                 completion(animeList!)
             }
         }.resume()
+        
+//        let li = Listing(name: "", bedrooms: 3, hostFirstName: "Fernando", isSuperHost: true)
+//
+//        completion(li)
     }
 }
 
 let networking = Networking()
 networking.getAnime(id: "1") { (res) in
-    for listing in res.listings {
-        print(listing.name)
-        print(listing.bedrooms)
-        print(listing.hostFirstName)
-        print(listing.isSuperHost)
-    }
+    
+    print(res)
+//    for listing in res.listings {
+//        print(listing.name)
+//        print(listing.bedrooms)
+//        print(listing.hostFirstName)
+//        print(listing.isSuperHost)
+//    }
 }
 
 PlaygroundPage.current.needsIndefiniteExecution = true

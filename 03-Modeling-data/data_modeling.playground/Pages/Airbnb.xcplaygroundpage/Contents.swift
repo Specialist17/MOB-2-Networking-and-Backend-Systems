@@ -38,7 +38,6 @@ extension Listing: Decodable {
 
 struct ListingList: Decodable {
     let search_results: [Listing]
-
 }
 
 let session = URLSession.shared
